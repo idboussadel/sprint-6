@@ -141,6 +141,8 @@ custom_articles.api_articles:
     _permission: 'access content'
 ```
 
+---
+
 2. **This controller route should use entityQuery to list 3 articles nodes with hardcoded node ids (Yes hardcoded 10, 223, 45, of your choice). Make sure to have at least 10 nodes created and (10, 223, 45) are of them :**
 
 Lets create the articles first using the drush commande :
@@ -338,7 +340,11 @@ If any content (node) changes, Drupal invalidates all caches with the `node_list
 
 ✅ The data will refresh instantly because the cache tags invalidate the cache when the node is updated.
 
+---
+
 3. **Given that you configured your drupal instance using drupal disabling-and-debugging-caching enable-render-cache-debugging. How do you inspect your cache tags using the response headers ?**
+
+<img width="1084" alt="image" src="https://github.com/user-attachments/assets/a2e317cb-7e96-4740-ab77-63123c8b5a8d" />
 
 Add to change this in settings.php (to use this `default.services.yml` instead of `services.yml`) :
 ```php
@@ -354,6 +360,3 @@ $settings['container_yamls'][] = $app_root . '/' . $site_path . '/../development
 ```
 
 <img width="1087" alt="image" src="https://github.com/user-attachments/assets/922da919-2a2f-46ca-8b31-fad830587b98" />
-
-
-<img width="1084" alt="image" src="https://github.com/user-attachments/assets/a2e317cb-7e96-4740-ab77-63123c8b5a8d" />
