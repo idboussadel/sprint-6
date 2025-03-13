@@ -1,0 +1,14 @@
+uuid: 308bc3eb-b685-4bab-8c81-36fe5a15c6fb
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.blog_manager
+  module:
+    - user
+id: user_remove_role_action.blog_manager
+label: 'Remove the Blog manager role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: blog_manager

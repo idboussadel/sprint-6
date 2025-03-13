@@ -1,0 +1,13 @@
+*/vendor/
+node_modules/
+sites/default/files/
+sites/*/private/
+sites/*/settings.php
+sites/*/services.yml
+*.log
+*.sqlite
+backup_*/
+*/web/core/
+.DS_Store
+*/web/sites/default/files/
+.idea

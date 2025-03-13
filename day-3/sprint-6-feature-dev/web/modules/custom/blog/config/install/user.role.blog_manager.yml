@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.blog
+    - taxonomy.vocabulary.categories
+  module:
+    - node
+    - taxonomy
+id: blog_manager
+label: 'Blog manager'
+weight: 4
+is_admin: null

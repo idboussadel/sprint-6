@@ -1,0 +1,18 @@
+uuid: cc3b48ae-02dc-4a6f-9b24-b17a55a5fe7b
+langcode: en
+status: true
+dependencies: {  }
+id: development_configuration
+label: 'Development Configuration'
+description: 'Development Configuration'
+weight: 0
+stackable: false
+no_patching: false
+storage: collection
+folder: ''
+module:
+  devel: 0
+  devel_generate: 0
+theme: {  }
+complete_list: {  }
+partial_list: {  }

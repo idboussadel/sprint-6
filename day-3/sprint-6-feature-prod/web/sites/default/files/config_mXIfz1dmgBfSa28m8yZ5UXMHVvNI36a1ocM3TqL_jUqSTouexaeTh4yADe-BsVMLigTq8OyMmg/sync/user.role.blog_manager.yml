@@ -1,0 +1,26 @@
+uuid: f920ea23-7113-4f51-9e3b-3ed783c672d5
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.blog
+    - taxonomy.vocabulary.categories
+  module:
+    - node
+    - taxonomy
+id: blog_manager
+label: 'Blog manager'
+weight: 4
+is_admin: null
+permissions:
+  - 'create blog content'
+  - 'create terms in categories'
+  - 'delete any blog content'
+  - 'delete blog revisions'
+  - 'delete own blog content'
+  - 'delete terms in categories'
+  - 'edit any blog content'
+  - 'edit own blog content'
+  - 'edit terms in categories'
+  - 'view blog revisions'
+  - 'view term revisions in categories'
