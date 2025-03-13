@@ -5,8 +5,5 @@ sites/*/private/
 sites/*/settings.php
 sites/*/services.yml
 *.log
-*.sqlite
 backup_*/
-web/core/
 .DS_Store
-.idea

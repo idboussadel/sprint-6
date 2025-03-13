@@ -128,3 +128,128 @@ I changed the content type name in production, then added a new field, Subtitle,
 ---
 
 ## Day 4: Work with Cache
+
+1. **Create a new route `/api/articles` :**
+
+```yaml
+custom_articles.api_articles:
+  path: '/api/articles'
+  defaults:
+    _controller: '\Drupal\custom_articles\Controller\ArticlesController::view'
+    _title: 'Article API'
+  requirements:
+    _permission: 'access content'
+```
+
+2. **This controller route should use entityQuery to list 3 articles nodes with hardcoded node ids (Yes hardcoded 10, 223, 45, of your choice). Make sure to have at least 10 nodes created and (10, 223, 45) are of them :**
+
+Lets create the articles first using the drush commande :
+
+```bash
+./vendor/bin/drush php:eval "\Drupal\node\Entity\Node::create(['type' => 'article', 'title' => 'Article 10', 'nid' => 10])->save();"
+```
+
+<img width="972" alt="image" src="https://github.com/user-attachments/assets/c35e45c2-f50f-4ff0-85eb-2911dfe77fb5" />
+
+<img width="1438" alt="image" src="https://github.com/user-attachments/assets/0350c8db-ba4d-41f8-ab85-14aaa91a705f" />
+
+
+Now lets create our controller :
+- The endpoint should responde with a JSON format: `[{nid: integer, title: string}]`.
+
+```php
+<?php
+
+namespace Drupal\module_cache\Controller;
+
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\node\Entity\Node;
+
+class ArticlesController extends ControllerBase
+{
+
+    public function getArticles()
+    {
+        $node_ids = [10, 223, 45];
+        $articles = [];
+
+        foreach ($node_ids as $nid) {
+            $node = Node::load($nid);
+            if ($node) {
+                $articles[] = [
+                    'nid' => $node->id(),
+                    'title' => $node->getTitle(),
+                ];
+            }
+        }
+
+        $response = new JsonResponse($articles);
+        return $response;
+    }
+}
+```
+
+Without caching it takes around 200ms to 300ms to get the json response :
+
+<img width="1439" alt="image" src="https://github.com/user-attachments/assets/bda9ad81-9f9e-409c-97e3-6f9a471a4bf5" />
+
+After implementing the caching mechanisme :
+
+```php
+<?php
+
+namespace Drupal\module_cache\Controller;
+
+use Drupal\Core\Cache\CacheableJsonResponse;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\node\Entity\Node;
+
+class ArticlesController extends ControllerBase
+{
+
+    public function getArticles()
+    {
+        $node_ids = [10, 223, 45];
+        $articles = [];
+
+        foreach ($node_ids as $nid) {
+            $node = Node::load($nid);
+            if ($node) {
+                $articles[] = [
+                    'nid' => $node->id(),
+                    'title' => $node->getTitle(),
+                ];
+            }
+        }
+
+        $response = new CacheableJsonResponse($articles);
+        $cache_metadata = new CacheableMetadata();
+        $cache_metadata->setCacheMaxAge(60);
+
+        $response->addCacheableDependency($cache_metadata);
+        return $response;
+    }
+}
+```
+
+After caching now its 40 - 50 ms :
+
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/1edd4dbc-8029-44f2-821c-f51582f719e0" />
+
+But now, after changing or updating, for example, the title of article 10, the cache doesn't invalidate and display the new value. To solve this issue, we need to add cache tags.
+
+```php
+        $response = new CacheableJsonResponse($articles);
+        $cache_metadata = new CacheableMetadata();
+        $cache_metadata->setCacheMaxAge(60);
+        // lets add `node_list` tag
+        $cache_metadata->addCacheTags(['node_list']);
+
+        $response->addCacheableDependency($cache_metadata);
+        return $response;
+```
+
+Adding the node_list cache tag ensures that the cached response depends on the node list.
+If any content (node) changes, Drupal invalidates all caches with the `node_list` tag.

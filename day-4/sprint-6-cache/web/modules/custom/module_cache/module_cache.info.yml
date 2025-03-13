@@ -1,0 +1,6 @@
+name: 'Module Cache'
+type: module
+description: 'A custom module for testing caching functionalities.'
+core_version_requirement: ^10 || ^11
+package: Custom
+version: "1.0"
