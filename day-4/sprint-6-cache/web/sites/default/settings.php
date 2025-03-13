@@ -713,7 +713,8 @@ $settings['update_free_access'] = FALSE;
 /**
  * Load services definition file.
  */
-$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';
+$settings['container_yamls'][] = $app_root . '/' . $site_path . '/default.services.yml';
+$settings['container_yamls'][] = $app_root . '/' . $site_path . '/../development.services.yml';
 
 /**
  * Override the default service container class.
@@ -892,7 +893,7 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
 # if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
 #   include $app_root . '/' . $site_path . '/settings.local.php';
 # }
-$databases['default']['default'] = array (
+$databases['default']['default'] = array(
   'database' => 'module_sprint6_day4',
   'username' => 'root',
   'password' => '',

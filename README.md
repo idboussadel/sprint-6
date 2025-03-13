@@ -1,4 +1,4 @@
-# Drupal Advanced Sprint-6
+# Drupal Advanced Sprint 6
 
 ### Table of Contents
 - [Day 3: Work with configuration & features](#day-3-work-with-configuration-features)
@@ -162,19 +162,55 @@ Now lets create our controller :
 
 namespace Drupal\module_cache\Controller;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ArticlesController extends ControllerBase
 {
+    /**
+     * The entity type manager.
+     *
+     * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+     */
+    protected $entityTypeManager;
+
+    /**
+     * Constructs an ArticlesController object.
+     *
+     * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+     *   The entity type manager.
+     */
+    public function __construct(EntityTypeManagerInterface $entity_type_manager)
+    {
+        $this->entityTypeManager = $entity_type_manager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function create(ContainerInterface $container)
+    {
+        return new static(
+            $container->get('entity_type.manager')
+        );
+    }
 
     public function getArticles()
     {
         $node_ids = [10, 223, 45];
-        $articles = [];
 
-        foreach ($node_ids as $nid) {
+        $query = $this->entityTypeManager->getStorage('node')->getQuery()
+            ->condition('type', 'article')
+            ->condition('nid', $node_ids, 'IN')
+            ->accessCheck(FALSE);
+
+        $result = $query->execute();
+
+        $articles = [];
+        foreach ($result as $nid) {
             $node = Node::load($nid);
             if ($node) {
                 $articles[] = [
@@ -194,7 +230,7 @@ Without caching it takes around 200ms to 300ms to get the json response :
 
 <img width="1439" alt="image" src="https://github.com/user-attachments/assets/bda9ad81-9f9e-409c-97e3-6f9a471a4bf5" />
 
-After implementing the caching mechanisme :
+After implementing the caching mechanism:
 
 ```php
 <?php
@@ -205,16 +241,52 @@ use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ArticlesController extends ControllerBase
 {
+    /**
+     * The entity type manager.
+     *
+     * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+     */
+    protected $entityTypeManager;
+
+    /**
+     * Constructs an ArticlesController object.
+     *
+     * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+     *   The entity type manager.
+     */
+    public function __construct(EntityTypeManagerInterface $entity_type_manager)
+    {
+        $this->entityTypeManager = $entity_type_manager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function create(ContainerInterface $container)
+    {
+        return new static(
+            $container->get('entity_type.manager')
+        );
+    }
 
     public function getArticles()
     {
         $node_ids = [10, 223, 45];
-        $articles = [];
 
-        foreach ($node_ids as $nid) {
+        $query = $this->entityTypeManager->getStorage('node')->getQuery()
+            ->condition('type', 'article')
+            ->condition('nid', $node_ids, 'IN')
+            ->accessCheck(FALSE);
+
+        $result = $query->execute();
+
+        $articles = [];
+        foreach ($result as $nid) {
             $node = Node::load($nid);
             if ($node) {
                 $articles[] = [
@@ -226,30 +298,62 @@ class ArticlesController extends ControllerBase
 
         $response = new CacheableJsonResponse($articles);
         $cache_metadata = new CacheableMetadata();
-        $cache_metadata->setCacheMaxAge(60);
+        $cache_metadata->setCacheMaxAge(3600);
 
         $response->addCacheableDependency($cache_metadata);
         return $response;
     }
 }
+
 ```
 
 After caching now its 40 - 50 ms :
 
 <img width="1440" alt="image" src="https://github.com/user-attachments/assets/1edd4dbc-8029-44f2-821c-f51582f719e0" />
 
+and we got a cache `HIT` :
+
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/a911d93c-abd8-42a4-8209-9369432a11cb" />
+
 But now, after changing or updating, for example, the title of article 10, the cache doesn't invalidate and display the new value. To solve this issue, we need to add cache tags.
 
 ```php
-        $response = new CacheableJsonResponse($articles);
-        $cache_metadata = new CacheableMetadata();
-        $cache_metadata->setCacheMaxAge(60);
-        // lets add `node_list` tag
-        $cache_metadata->addCacheTags(['node_list']);
+$response = new CacheableJsonResponse($articles);
+$cache_metadata = new CacheableMetadata();
+$cache_metadata->setCacheMaxAge(3600);
 
-        $response->addCacheableDependency($cache_metadata);
-        return $response;
+// you cann add 
+$cache_metadata->addCacheTags(['node_list']);
+// or add 
+foreach ($node_ids as $nid) {
+    $cache_metadata->addCacheTags(['node:' . $nid]);
+}
+
+$response->addCacheableDependency($cache_metadata);
+return $response;
 ```
 
 Adding the node_list cache tag ensures that the cached response depends on the node list.
 If any content (node) changes, Drupal invalidates all caches with the `node_list` tag.
+
+✅ The data will refresh instantly because the cache tags invalidate the cache when the node is updated.
+
+3. **Given that you configured your drupal instance using drupal disabling-and-debugging-caching enable-render-cache-debugging. How do you inspect your cache tags using the response headers ?**
+
+Add to change this in settings.php (to use this `default.services.yml` instead of `services.yml`) :
+```php
+$settings['container_yamls'][] = $app_root . '/' . $site_path . '/default.services.yml';
+```
+
+<img width="1433" alt="image" src="https://github.com/user-attachments/assets/59355f7f-0bd4-4b6d-9c58-f4b6392c9231" />
+
+And add this to see the (X-Drupal-Cache-Tags and the other tags) :
+
+```php
+$settings['container_yamls'][] = $app_root . '/' . $site_path . '/../development.services.yml';
+```
+
+<img width="1087" alt="image" src="https://github.com/user-attachments/assets/922da919-2a2f-46ca-8b31-fad830587b98" />
+
+
+<img width="1084" alt="image" src="https://github.com/user-attachments/assets/a2e317cb-7e96-4740-ab77-63123c8b5a8d" />
