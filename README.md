@@ -361,6 +361,8 @@ $settings['container_yamls'][] = $app_root . '/' . $site_path . '/../development
 
 <img width="1087" alt="image" src="https://github.com/user-attachments/assets/922da919-2a2f-46ca-8b31-fad830587b98" />
 
+---
+
 ### Day 5: Work with Data Migration
 
 1. **What's the role of migration_lookup**
@@ -373,7 +375,6 @@ For example, if you migrate articles and their authors separately, you can use `
 
 2. **What would you do if you needed to import from a different data source other than CSV, say MySQL database ?**
 
-2. Importing from MySQL Instead of CSV
 If you need to import from a MySQL database instead of a CSV file, you should use the Migrate Source SQL plugin. Here’s what you would do:
 
 Define your source in a migration YAML file using the source plugin as embedded_data.
