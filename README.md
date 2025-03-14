@@ -5,8 +5,10 @@
   - [Practice Configuration Sync](#practice-configuration-sync)
   - [Practice Features](#practice-features)
 - [Day 4: Work with Cache](#day-4-work-with-cache)
+- [Day 5: Work with Data Migration](#day-5-work-with-data-migration)
 
 ---  
+
 ## Day 3: Work with configuration & features
 
 ### Practice Configuration Sync
