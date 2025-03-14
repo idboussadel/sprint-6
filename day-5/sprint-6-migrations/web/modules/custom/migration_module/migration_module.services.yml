@@ -1,0 +1,5 @@
+services:
+  migrate.source.taxonomy_json:
+    class: Drupal\migrate_source_json\Plugin\migrate\source\Url
+    tags:
+      - { name: migrate.source }

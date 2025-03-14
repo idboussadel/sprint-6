@@ -1,0 +1,64 @@
+{
+    "terms": [
+        {
+            "id": 1,
+            "name": "IT Infrastructure"
+        },
+        {
+            "id": 2,
+            "name": "Cybersecurity"
+        },
+        {
+            "id": 3,
+            "name": "Web & Mobile Development"
+        },
+        {
+            "id": 4,
+            "name": "Manufacturing & Engineering"
+        },
+        {
+            "id": 5,
+            "name": "Finance & Compliance"
+        },
+        {
+            "id": 6,
+            "name": "Marketing & Advertising"
+        },
+        {
+            "id": 7,
+            "name": "Business Operations"
+        },
+        {
+            "id": 8,
+            "name": "Human Resources & Training"
+        },
+        {
+            "id": 9,
+            "name": "Customer Service & Support"
+        },
+        {
+            "id": 10,
+            "name": "Logistics & Supply Chain"
+        },
+        {
+            "id": 11,
+            "name": "Healthcare & Medical"
+        },
+        {
+            "id": 12,
+            "name": "Legal & Regulatory"
+        },
+        {
+            "id": 13,
+            "name": "Retail & eCommerce"
+        },
+        {
+            "id": 14,
+            "name": "Energy & Sustainability"
+        },
+        {
+            "id": 15,
+            "name": "Research & Development"
+        }
+    ]
+}

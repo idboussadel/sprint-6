@@ -1,0 +1,11 @@
+name: 'My Migration module'
+type: module
+description: 'Custom migration module for tasks and taxonomy.'
+core_version_requirement: ^10
+package: Custom
+dependencies:
+  - 'drupal:migrate_plus'
+  - 'drupal:migrate_tools'
+  - 'drupal:migrate'
+  - 'drupal:taxonomy'
+  - 'drupal:node'

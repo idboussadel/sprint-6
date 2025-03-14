@@ -1,0 +1,31 @@
+id,name,due_date,status,category
+1,Fix Server Downtime,2024-08-01,Pending,1
+2,Update Firewall Rules,2024-08-02,In Progress,2
+3,Deploy New Website,2024-08-03,Pending,3
+4,Inspect Factory Machinery,2024-08-04,Completed,4
+5,Audit Financial Transactions,2024-08-05,Pending,5
+6,Develop Marketing Strategy,2024-08-06,In Progress,6
+7,Implement ERP System,2024-08-07,Completed,7
+8,Perform Data Backup,2024-08-08,Pending,1
+9,Train New Employees,2024-08-09,In Progress,8
+10,Resolve Client Complaints,2024-08-10,Completed,9
+11,Upgrade Office Network,2024-08-11,In Progress,1
+12,Update Software Licenses,2024-08-12,Completed,1
+13,Schedule Employee Performance Reviews,2024-08-13,Pending,8
+14,Check Warehouse Inventory,2024-08-14,Completed,10
+15,Enhance Cybersecurity Policy,2024-08-15,In Progress,2
+16,Optimize Supply Chain,2024-08-16,Pending,10
+17,Develop AI Chatbot,2024-08-17,In Progress,3
+18,Inspect Electrical Systems,2024-08-18,Completed,4
+19,Create Social Media Ads,2024-08-19,Pending,6
+20,Implement GDPR Compliance,2024-08-20,In Progress,12
+21,Revamp Company Branding,2024-08-21,Completed,6
+22,Monitor Server Logs,2024-08-22,In Progress,1
+23,Optimize SEO Rankings,2024-08-23,Completed,6
+24,Train Sales Team,2024-08-24,Pending,8
+25,Upgrade Factory Assembly Line,2024-08-25,In Progress,4
+26,Design Mobile App UI,2024-08-26,Completed,3
+27,Check Equipment Calibration,2024-08-27,Pending,4
+28,Conduct Customer Surveys,2024-08-28,In Progress,9
+29,Patch Security Vulnerabilities,2024-08-29,Completed,2
+30,Analyze Market Trends,2024-08-30,Pending,6

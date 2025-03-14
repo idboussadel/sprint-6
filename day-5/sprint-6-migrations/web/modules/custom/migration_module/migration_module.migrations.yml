@@ -1,0 +1,5 @@
+id: my_migration
+label: 'My Migration'
+migration_tags:
+  - import_tasks
+  - import_taxonomy
