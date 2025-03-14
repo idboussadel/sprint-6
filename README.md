@@ -367,6 +367,137 @@ $settings['container_yamls'][] = $app_root . '/' . $site_path . '/../development
 
 ### Day 5: Work with Data Migration
 
+i created the following architeture :
+
+```bash
+migration_module/
+│── migration_module.info.yml
+│── migration_module.migrations.yml
+│── migration_module.services.yml
+│── config/install/
+│   ├── migrate_plus.migration.tasks.yml
+│   ├── migrate_plus.migration.task_taxonomy.yml
+│── migrations/
+│   ├── tasks.csv
+│   ├── taxonomy.json
+```
+
+I created two migrations:
+
+1. **Task Taxonomy Migration – Imports task categories (taxonomy terms)**
+
+```yaml
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - migration_module
+id: task_taxonomy
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Task Taxonomy Migration'
+migration_group: tasks
+label: 'Import Task Taxonomy Terms'
+source:
+  plugin: url
+  data_fetcher_plugin: file
+  data_parser_plugin: json
+  urls: 'modules/custom/migration_module/migrations/taxonomy.json'
+  item_selector: '/terms'
+  fields:
+    -
+      name: id
+      label: 'Term ID'
+      selector: id
+    -
+      name: name
+      label: 'Term Name'
+      selector: name
+  ids:
+    id:
+      type: integer
+process:
+  tid: id
+  name: name
+destination:
+  plugin: entity:taxonomy_term
+  default_bundle: categories
+```
+
+2. **Task Nodes Migration – Imports task nodes and assigns them to the appropriate migration group**
+
+```yaml
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - migration_module
+id: tasks
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Task Migration'
+migration_group: tasks
+label: 'Task Nodes'
+source:
+  plugin: csv
+  path: 'modules/custom/migration_module/migrations/tasks.csv'
+  header_row_count: 1
+  ids:
+    - id
+  fields:
+    -
+      name: id
+      label: 'Task ID'  
+    -
+      name: name
+      label: 'Task Name'
+    -
+      name: due_date
+      label: 'Due Date'
+    -
+      name: status
+      label: 'Task Status'
+    -
+      name: category
+      label: 'Task Category ID'
+process:
+  type:
+    plugin: default_value
+    default_value: task
+  title: name
+  field_status: status
+  field_due_date: due_date
+  field_category:
+    plugin: migration_lookup
+    migration: task_taxonomy
+    source: category
+destination:
+  plugin: 'entity:node'
+migration_dependencies:
+  required:
+    - task_taxonomy
+```
+
+<img width="979" alt="image" src="https://github.com/user-attachments/assets/0fdccac0-cd78-4d69-acbc-6b4944ff6580" />
+
+
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/86d81c4a-6fb4-4711-8074-6e19500c95ce" />
+
+Taxonomy (category) :
+
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/4ecc29a8-9e72-435f-b2e9-ffd39c187bf4" />
+
+<img width="976" alt="image" src="https://github.com/user-attachments/assets/1cb2032e-d428-4036-bfaf-7d576afe70bc" />
+
+
+---
+
 1. **What's the role of migration_lookup**
 
 `migration_lookup` is a Drupal Migrate API plugin that helps establish relationships between source and destination entities. It is commonly used when migrating related data where a referenced entity (e.g., taxonomy terms, users, nodes) has already been migrated. Instead of duplicating records, `migration_lookup` fetches the corresponding destination ID for an already-migrated entity.
