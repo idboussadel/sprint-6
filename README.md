@@ -360,3 +360,101 @@ $settings['container_yamls'][] = $app_root . '/' . $site_path . '/../development
 ```
 
 <img width="1087" alt="image" src="https://github.com/user-attachments/assets/922da919-2a2f-46ca-8b31-fad830587b98" />
+
+### Day 5: Work with Data Migration
+
+1. **What's the role of migration_lookup**
+
+`migration_lookup` is a Drupal Migrate API plugin that helps establish relationships between source and destination entities. It is commonly used when migrating related data where a referenced entity (e.g., taxonomy terms, users, nodes) has already been migrated. Instead of duplicating records, `migration_lookup` fetches the corresponding destination ID for an already-migrated entity.
+
+For example, if you migrate articles and their authors separately, you can use `migration_lookup` to link an article to the correct author by retrieving the author's new ID.
+
+---
+
+2. **What would you do if you needed to import from a different data source other than CSV, say MySQL database ?**
+
+2. Importing from MySQL Instead of CSV
+If you need to import from a MySQL database instead of a CSV file, you should use the Migrate Source SQL plugin. Here’s what you would do:
+
+Define your source in a migration YAML file using the source plugin as embedded_data.
+Use source: plugin: sql and define the database connection.
+Configure the source query to fetch the required data.
+
+```yaml
+source:
+  plugin: sql
+  query: SELECT * FROM park
+  key: id
+  target: default
+  database:
+    driver: mysql
+    database: park
+    username: root
+    password: your_password
+    host: localhost
+    port: 3306
+```
+
+This will enable Drupal to pull data from the MySQL database.
+
+---
+
+3. **Rolling Back a Migration**
+
+```sh
+drush migrate:rollback migration_id
+```
+
+This will remove previously imported data for the specified migration while keeping the migration records intact.
+
+If you want to rollback all migrations, use:
+
+```sh
+drush migrate:rollback --all
+```
+
+---
+
+4. **How would you process a field data source before importing it? Say trim the length of a string to 10 characters?**
+To process field data before importing, you can use the process pipeline in your migration YAML file. Drupal provides various process plugins to manipulate data, such as callback, substr, explode, etc.
+
+To trim a string to 10 characters for example :
+
+Use the substr process plugin:
+
+```yaml
+process:
+  my_field:
+    - plugin: substr
+      source: my_source_field
+      start: 0
+      length: 10
+```
+
+Alternatively, use the callback plugin to apply a custom PHP function:
+
+```yaml
+process:
+  my_field:
+    - plugin: callback
+      callable: substr
+      source: my_source_field
+      unpack_source: true
+      parameters:
+        - 0
+        - 10
+```
+
+You can also chain multiple process plugins to perform more complex transformations, like trimming whitespace before truncating:
+
+```yaml
+process:
+  field_example:
+    -
+      plugin: trim
+      source: source_field
+    -
+      plugin: substr
+      start: 0
+      length: 10
+```

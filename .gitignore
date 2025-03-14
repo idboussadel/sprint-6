@@ -7,3 +7,4 @@ sites/*/services.yml
 *.log
 backup_*/
 .DS_Store
+.idea
