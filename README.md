@@ -367,7 +367,7 @@ $settings['container_yamls'][] = $app_root . '/' . $site_path . '/../development
 
 ### Day 5: Work with Data Migration
 
-i created the following architeture :
+I set up the following directory structure for the migration module:
 
 ```bash
 migration_module/
